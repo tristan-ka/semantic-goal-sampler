@@ -1,6 +1,10 @@
+import hydra
+from omegaconf import DictConfig
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+
 from src.playground_env.env_params import get_env_params
 from src.playground_env.descriptions import generate_all_descriptions
+
 
 def generate_prompt(known_goals):
     prompt = 'You know how to:'
@@ -21,13 +25,15 @@ def encode_prompt(prompt, model, tokenizer):
     else:
         return output.reshape([1, len(output)])
 
-if __name__ == '__main__':
+@hydra.main(config_path="conf", config_name="config")
+def main(cfg: DictConfig) -> None:
 
+    model_path = cfg.llm_model_path
     env_params = get_env_params()
     train_descriptions, test_descriptions, extra_descriptions = generate_all_descriptions(env_params)
 
     prompt = generate_prompt(train_descriptions)
-    model_path = 'model_files/roberta2gpt2-daily-dialog'
+    # model_path = 'model_files/roberta2gpt2-daily-dialog'
     tokenizer = AutoTokenizer.from_pretrained(model_path)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
 
@@ -35,3 +41,6 @@ if __name__ == '__main__':
     outputs = model.generate(inputs)
 
     print(tokenizer.decode(outputs[0]))
+
+if __name__ == '__main__':
+    main()

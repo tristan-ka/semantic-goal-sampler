@@ -1,10 +1,12 @@
 import hydra
 import logging
+import sys
 from omegaconf import DictConfig
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-from playground_env.env_params import get_env_params
-from playground_env.descriptions import generate_all_descriptions
+sys.path.append('../.')
+from src.playground_env.env_params import get_env_params
+from src.playground_env.descriptions import generate_all_descriptions
 
 
 def generate_prompt(known_goals):

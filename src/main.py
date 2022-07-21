@@ -1,4 +1,5 @@
 import hydra
+import logging
 from omegaconf import DictConfig
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
@@ -40,7 +41,7 @@ def main(cfg: DictConfig) -> None:
     inputs = encode_prompt(prompt, model, tokenizer)
     outputs = model.generate(inputs)
 
-    print(tokenizer.decode(outputs[0]))
+    logging.info(tokenizer.decode(outputs[0]))
 
 if __name__ == '__main__':
     main()

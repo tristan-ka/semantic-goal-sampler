@@ -3,8 +3,8 @@ import logging
 from omegaconf import DictConfig
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-from src.playground_env.env_params import get_env_params
-from src.playground_env.descriptions import generate_all_descriptions
+from playground_env.env_params import get_env_params
+from playground_env.descriptions import generate_all_descriptions
 
 
 def generate_prompt(known_goals):

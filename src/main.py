@@ -1,6 +1,7 @@
 import hydra
 import logging
 import sys
+import torch
 from omegaconf import DictConfig
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
@@ -31,6 +32,8 @@ def encode_prompt(prompt, model, tokenizer):
 @hydra.main(config_path="conf", config_name="config")
 def main(cfg: DictConfig) -> None:
 
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    logging.info('Device is: ' + device)
     model_path = cfg.llm_model_path
     env_params = get_env_params()
     train_descriptions, test_descriptions, extra_descriptions = generate_all_descriptions(env_params)
@@ -38,9 +41,9 @@ def main(cfg: DictConfig) -> None:
     prompt = generate_prompt(train_descriptions)
     # model_path = 'model_files/roberta2gpt2-daily-dialog'
     tokenizer = AutoTokenizer.from_pretrained(model_path)
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_path).to(device)
 
-    inputs = encode_prompt(prompt, model, tokenizer)
+    inputs = encode_prompt(prompt, model, tokenizer).to(device)
     outputs = model.generate(inputs)
 
     logging.info(tokenizer.decode(outputs[0]))

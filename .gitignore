@@ -125,6 +125,7 @@ src/data/expe/*
 src/data/lstm_checkpoints/*
 src/results/*
 src/model_files/*
+src/slurm/logs/*
 src/launch.sh
 
 src/outputs/*

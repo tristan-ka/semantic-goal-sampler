@@ -39,7 +39,7 @@ def encode_prompt(prompt, tokenizer):
 def prune_output(output_text):
     # TODO: adhoc function based on observed generated text
     # final version should look into env grammar and remove all non environmental tokens
-    return re.sub('<.*?>', '', output_text)[3:]
+    return re.sub('<.*?>', '', output_text)
 
 def write_set_to_txt(filename, out_set):
     with open(filename, 'w') as fp:
@@ -71,12 +71,7 @@ def main(cfg: DictConfig) -> None:
         goal_candidates.append(goal_candidate)
 
     set_candidates = set(goal_candidates)
-    set_train = set(train_descriptions)
-    set_test = set(test_descriptions)
-
-    write_set_to_txt(r'candidates_U_test.txt', set_candidates.intersection(set_test))
-    write_set_to_txt(r'candidates_U_train.txt', set_candidates.intersection(set_train))
-    write_set_to_txt(r'others.txt', set_candidates - set_train - set_test)
+    write_set_to_txt(r'others.txt', set_candidates)
 
 if __name__ == '__main__':
     main()

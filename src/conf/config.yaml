@@ -1,2 +1,9 @@
-# llm_model_path: '/Users/tristankarch/Repo/semantic-goal-sampler/src/model_files/roberta2gpt2-daily-dialog'
+device: 'cpu'
+
+# LLM parameters
+#llm_model_path: '/Users/tristankarch/Repo/semantic-goal-sampler/src/model_files/roberta2gpt2-daily-dialog'
 llm_model_path: '/gpfsscratch/rech/imi/uwv18kd/model_parameters/T0pp'
+
+# Prompting parameters
+n_gen: 500
+prompt_type: 'open'

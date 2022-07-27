@@ -1,4 +1,4 @@
-devices: ['cuda:0', 'cuda:1', 'cuda:2', 'cuda:4']
+devices: ['cuda:0', 'cuda:1', 'cuda:2', 'cuda:3']
 # LLM parameters
 #llm_model_path: '/Users/tristankarch/Repo/semantic-goal-sampler/src/model_files/distilgpt2'
 llm_model_path: '/gpfsscratch/rech/imi/uwv18kd/model_parameters/T0pp'

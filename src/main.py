@@ -12,9 +12,9 @@ from src.playground_env.env_params import get_env_params
 from src.playground_env.descriptions import generate_all_descriptions
 
 
-def generate_prompt(known_goals, prompt_type='open'):
+def generate_prompt(known_goals, prompt_type='open', n_goals=50):
     prompt = 'Here is a list of goals that you know:'
-    r_idx = random.choices([i for i in range(len(known_goals))],k=50)
+    r_idx = random.choices([i for i in range(len(known_goals))],k=n_goals)
     for goal in [known_goals[i] for i in r_idx]:
         prompt += goal + ', '
     if prompt_type == 'open':
@@ -55,6 +55,7 @@ def main(cfg: DictConfig) -> None:
     model_path = cfg.llm_model_path
     env_params = get_env_params()
     prompt_type = cfg.prompt_type
+    n_goals_prompt = cfg.n_goals
 
     logging.info(prompt_type)
     train_descriptions, test_descriptions, extra_descriptions = generate_all_descriptions(env_params)
@@ -64,7 +65,9 @@ def main(cfg: DictConfig) -> None:
 
     goal_candidates = []
     for tries in range(cfg.n_gen):
-        prompt = generate_prompt(train_descriptions, prompt_type=prompt_type)
+        prompt = generate_prompt(known_goals=train_descriptions,
+                                 prompt_type=prompt_type,
+                                 n_goals=n_goals_prompt)
         inputs = encode_prompt(prompt, tokenizer).to(device)
         outputs = model.generate(inputs)
         goal_candidate = prune_output(tokenizer.decode(outputs[0]))

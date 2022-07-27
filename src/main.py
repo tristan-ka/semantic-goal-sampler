@@ -80,7 +80,7 @@ def main(cfg: DictConfig) -> None:
 
     if 'distilgpt2' in model_path:
         llm_type = 'causal'
-    elif 't0pp' in model_path:
+    elif 'T0pp' in model_path:
         llm_type = 'seq2seq'
     else:
         raise ValueError('Unknown LLM type')

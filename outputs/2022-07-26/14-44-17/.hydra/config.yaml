@@ -1,0 +1,4 @@
+device: cpu
+llm_model_path: /gpfsscratch/rech/imi/uwv18kd/model_parameters/T0pp
+n_gen: 500
+prompt_type: predicate

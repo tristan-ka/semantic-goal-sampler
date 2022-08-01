@@ -1,0 +1,4 @@
+  File "/gpfsdswork/projects/rech/imi/uwv18kd/semantic-goal-sampler/src/main.py", line 17
+    for goal in known_goals[i for i in r_idx]:
+                              ^
+SyntaxError: invalid syntax

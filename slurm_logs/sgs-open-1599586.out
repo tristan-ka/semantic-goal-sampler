@@ -1,5 +1,0 @@
-Loading pytorch-gpu/py3/1.9.0
-  Loading requirement: cuda/11.2 nccl/2.9.6-1-cuda cudnn/8.1.1.33-cuda gcc/8.4.1
-    openmpi/4.1.1-cuda intel-mkl/2020.4 magma/2.5.4-cuda sox/14.4.2
-[2022-07-26 17:30:51,018][root][INFO] - Device is: cpu
-[2022-07-26 17:30:51,018][root][INFO] - open

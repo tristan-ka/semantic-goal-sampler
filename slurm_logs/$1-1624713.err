@@ -1,7 +1,0 @@
-Error executing job with overrides: []
-Traceback (most recent call last):
-  File "/gpfsdswork/projects/rech/imi/uwv18kd/semantic-goal-sampler/src/main.py", line 86, in main
-    raise ValueError('Unknown LLM type')
-ValueError: Unknown LLM type
-
-Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.

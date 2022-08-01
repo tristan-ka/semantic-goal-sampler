@@ -8,7 +8,7 @@ if __name__ == '__main__':
     env_params = get_env_params()
     train_descriptions, test_descriptions, extra_descriptions = generate_all_descriptions(env_params)
 
-    output_dir = '/Users/tristankarch/Repo/semantic-goal-sampler/src/outputs/jeanzay/17-30-50/'
+    output_dir = '/outputs/jeanzay/17-30-50/'
     with open(output_dir + 'others.txt') as f:
         lines = f.readlines()
     with open(output_dir + '.hydra/config.yaml') as f:

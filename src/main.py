@@ -73,7 +73,7 @@ def write_set_to_txt(filename, out_set):
             fp.write("%s\n" % item)
 
 
-@hydra.main(config_path="conf", config_name="config")
+@hydra.main(config_path="../conf", config_name="config")
 def main(cfg: DictConfig) -> None:
     model_path = cfg.llm_model_path
     devices = cfg.devices

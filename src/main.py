@@ -2,12 +2,14 @@ import hydra
 import logging
 import sys
 import random
-import torch
 import re
-from math import ceil
 from enum import Enum
 from omegaconf import DictConfig
 from transformers import AutoModelForCausalLM, AutoModelForSeq2SeqLM, AutoTokenizer, AutoModelForMaskedLM
+from lamorel import Caller
+from accelerate import Accelerator
+
+accelerator = Accelerator()
 
 sys.path.append('../.')
 from src.playground_env.env_params import get_env_params
@@ -73,48 +75,25 @@ def write_set_to_txt(filename, out_set):
             fp.write("%s\n" % item)
 
 
-@hydra.main(config_path="../conf", config_name="config")
+@hydra.main(config_path="../conf", config_name="local_config")
 def main(cfg: DictConfig) -> None:
-    model_path = cfg.llm_model_path
-    devices = cfg.devices
+    lm_server = Caller(cfg.lamorel_args)
 
-    if 'distilgpt2' in model_path:
-        llm_type = 'causal'
-    elif 'T0pp' in model_path:
-        llm_type = 'seq2seq'
-    else:
-        raise ValueError('Unknown LLM type')
-
-    tokenizer, model, num_layers = load_hf_model_and_tokenizer(llm_type, model_path)
-    device = devices[0]
-    if len(devices) == 1:
-        model.to(device)
-    else:
-        layers_per_device = ceil(num_layers / len(devices))
-        device_map = {
-            _device: list(range(i * layers_per_device, min((i + 1) * layers_per_device, num_layers)))
-            for i, _device in enumerate(devices)
-        }
-        model.parallelize(device_map)
-
-    logging.info('Device is: ' + device)
-
+    cfg_rl = cfg.rl_script_args
     env_params = get_env_params()
-    prompt_type = cfg.prompt_type
-    n_goals_prompt = cfg.n_goals
+    prompt_type = cfg_rl.prompt_type
+    n_goals_prompt = cfg_rl.n_goals
 
     logging.info(prompt_type)
     train_descriptions, test_descriptions, extra_descriptions = generate_all_descriptions(env_params)
 
-
     goal_candidates = []
-    for tries in range(cfg.n_gen):
+    for tries in range(cfg_rl.n_gen):
         prompt = generate_prompt(known_goals=train_descriptions,
                                  prompt_type=prompt_type,
                                  n_goals=n_goals_prompt)
-        inputs = encode_prompt(prompt, tokenizer).to(device)
-        outputs = model.generate(inputs)
-        goal_candidate = prune_output(tokenizer.decode(outputs[0]))
+        outputs = lm_server.generate(contexts=[prompt], max_len=512)
+        goal_candidate = prune_output(outputs)
         goal_candidates.append(goal_candidate)
 
     set_candidates = set(goal_candidates)

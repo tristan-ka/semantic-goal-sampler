@@ -1,5 +1,5 @@
 #!/bin/sh
-#SBATCH --job-name=$1
+#SBATCH --job-name=lamorel-sgs
 #SBATCH --ntasks-per-node=1                   # number of MP tasks
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=40           # number of cores per tasks (we ask a lot of cpus to get more memory)
@@ -16,4 +16,7 @@ module purge
 module load pytorch-gpu/py3/1.9.0
 conda activate sgs
 
-python main.py
+srun slurm/launcher.sh \
+  rl_scipt_args.path=$WORK/semantic-goal-sampler/src/main.py \
+  --config-path=$WORK/semantic-goal-sampler/conf \
+  --config-name=slurm_cluster_config

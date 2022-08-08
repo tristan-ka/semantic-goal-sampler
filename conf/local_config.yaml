@@ -19,7 +19,6 @@ lamorel_args:
 rl_script_args:
   path: ???
   task_idx: 13
-  num_steps: 100
   n_gen: 3
   n_goals: 10
   prompt_type: 'open'
@@ -27,3 +26,4 @@ rl_script_args:
   temperature: 1
   top_p: 0.5
   num_return_sequences: 5
+  batch_size_gen: 2

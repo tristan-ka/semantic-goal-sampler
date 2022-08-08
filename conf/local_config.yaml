@@ -1,0 +1,29 @@
+lamorel_args:
+  distributed_setup_args:
+    n_rl_processes: 1
+    n_llm_processes: 1
+
+  accelerate_args:
+    config_file: accelerate/default_config.yaml
+    machine_rank: 0
+    num_machines: 1
+    num_processes: 2
+    cpu:
+
+  llm_args:
+    model_type: causal
+    model_path: /Users/tristankarch/Repo/semantic-goal-sampler/src/model_files/distilgpt2
+    model_parallelism_size: 1
+    minibatch_size: 32
+
+rl_script_args:
+  path: ???
+  task_idx: 13
+  num_steps: 100
+  n_gen: 3
+  n_goals: 10
+  prompt_type: 'open'
+  do_sample: True
+  temperature: 1
+  top_p: 0.5
+  num_return_sequences: 5

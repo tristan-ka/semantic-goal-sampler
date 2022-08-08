@@ -5,7 +5,6 @@ import random
 import re
 from enum import Enum
 from omegaconf import DictConfig
-from transformers import AutoModelForCausalLM, AutoModelForSeq2SeqLM, AutoTokenizer, AutoModelForMaskedLM
 from lamorel import Caller
 from accelerate import Accelerator
 
@@ -15,27 +14,6 @@ sys.path.append('../.')
 from src.playground_env.env_params import get_env_params
 from src.playground_env.descriptions import generate_all_descriptions
 
-
-class ModelTypesEnum(Enum):
-    causal = 0
-    seq2seq = 1
-
-
-def load_hf_model_and_tokenizer(type, path):
-    print("Loading model {}".format(path))
-    tokenizer = AutoTokenizer.from_pretrained(path)
-
-    # Select class according to type
-    if ModelTypesEnum[type] == ModelTypesEnum.causal:
-        model = AutoModelForCausalLM.from_pretrained(path)
-        n_layers = model.config.n_layer
-    elif ModelTypesEnum[type] == ModelTypesEnum.seq2seq:
-        model = AutoModelForSeq2SeqLM.from_pretrained(path)
-        n_layers = len(model.encoder.block)
-    else:
-        raise NotImplementedError()
-
-    return tokenizer, model, n_layers
 
 
 def generate_prompt(known_goals, prompt_type='open', n_goals=50):
@@ -53,20 +31,11 @@ def generate_prompt(known_goals, prompt_type='open', n_goals=50):
     return prompt
 
 
-def encode_prompt(prompt, tokenizer):
-    output = tokenizer.encode(prompt, return_tensors="pt")[0]
-    max_len = 1024
-
-    if len(output) > max_len:
-        return output[:max_len].reshape([1, max_len])
-    else:
-        return output.reshape([1, len(output)])
-
-
-def prune_output(output_text):
+def prune_output(output_texts):
     # TODO: adhoc function based on observed generated text
     # final version should look into env grammar and remove all non environmental tokens
-    return re.sub('<.*?>', '', output_text)
+
+    return [re.sub('<.*?>', '', text) for text in output_texts]
 
 
 def write_set_to_txt(filename, out_set):
@@ -87,18 +56,21 @@ def main(cfg: DictConfig) -> None:
     logging.info(prompt_type)
     train_descriptions, test_descriptions, extra_descriptions = generate_all_descriptions(env_params)
 
-    goal_candidates = []
+    goal_candidates_out = []
     for tries in range(cfg_rl.n_gen):
-        prompt = generate_prompt(known_goals=train_descriptions,
+        print(tries)
+        prompts = [generate_prompt(known_goals=train_descriptions,
                                  prompt_type=prompt_type,
-                                 n_goals=n_goals_prompt)
-        outputs = lm_server.generate(contexts=[prompt], max_len=512)
-        goal_candidate = prune_output(outputs)
-        goal_candidates.append(goal_candidate)
+                                 n_goals=n_goals_prompt) for _ in range(cfg_rl.batch_size_gen)]
+        outputs = lm_server.generate(contexts=prompts)
 
-    set_candidates = set(goal_candidates)
+        outputs_text = [output[0]['text'] for output in outputs]
+        goal_candidates = prune_output(outputs_text)
+        goal_candidates_out.extend(goal_candidates)
+
+    set_candidates = set(goal_candidates_out)
     write_set_to_txt(r'others.txt', set_candidates)
-
+    lm_server.close()
 
 if __name__ == '__main__':
     main()

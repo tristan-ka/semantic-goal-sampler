@@ -11,7 +11,7 @@ lamorel_args:
     num_processes: 2
 
   llm_args:
-    model_type: ???
+    model_type: seq2seq
     model_path: /gpfsscratch/rech/imi/uwv18kd/model_parameters/T0pp
     model_parallelism_size: 4
     minibatch_size: 32

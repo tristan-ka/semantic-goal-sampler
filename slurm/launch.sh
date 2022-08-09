@@ -17,6 +17,6 @@ module load pytorch-gpu/py3/1.9.0
 conda activate sgs
 
 srun slurm/launcher.sh \
-  rl_scipt_args.path=$WORK/semantic-goal-sampler/src/main.py \
+  rl_script_args.path=$WORK/semantic-goal-sampler/src/main.py \
   --config-path=$WORK/semantic-goal-sampler/conf \
   --config-name=slurm_cluster_config

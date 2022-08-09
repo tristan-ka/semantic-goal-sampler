@@ -16,6 +16,8 @@ module purge
 module load pytorch-gpu/py3/1.9.0
 conda activate sgs
 
+chmod +x slurm/launcher.sh
+
 srun slurm/launcher.sh \
   rl_script_args.path=$WORK/semantic-goal-sampler/src/main.py \
   --config-path=$WORK/semantic-goal-sampler/conf \

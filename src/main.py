@@ -11,8 +11,8 @@ from accelerate import Accelerator
 accelerator = Accelerator()
 
 sys.path.append('../.')
-from src.playground_env.env_params import get_env_params
-from src.playground_env.descriptions import generate_all_descriptions
+from playground_env.env_params import get_env_params
+from playground_env.descriptions import generate_all_descriptions
 
 
 

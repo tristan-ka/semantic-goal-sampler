@@ -130,3 +130,5 @@ src/launch.sh
 
 src/outputs/*
 outputs/*
+slurm_logs/*
+outputs/*

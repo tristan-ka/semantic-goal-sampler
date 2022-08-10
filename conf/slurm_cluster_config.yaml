@@ -7,7 +7,7 @@ lamorel_args:
     config_file: accelerate/default_config.yaml
     machine_rank: ???
     main_process_ip: ???
-    num_machines: 2
+    num_machines: 1
     num_processes: 2
 
   llm_args:

@@ -1,4 +1,4 @@
-from src.playground_env.env_params import get_env_params
+from playground_env.env_params import get_env_params
 
 
 def generate_all_descriptions(env_params):

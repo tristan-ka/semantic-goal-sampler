@@ -11,6 +11,7 @@ from accelerate import Accelerator
 accelerator = Accelerator()
 
 sys.path.append('../.')
+sys.path.append('src/')
 from playground_env.env_params import get_env_params
 from playground_env.descriptions import generate_all_descriptions
 
@@ -56,6 +57,8 @@ def main(cfg: DictConfig) -> None:
     logging.info(prompt_type)
     train_descriptions, test_descriptions, extra_descriptions = generate_all_descriptions(env_params)
 
+    print(cfg_rl.prompt_type)
+    print(cfg_rl.n_gen)
     goal_candidates_out = []
     for tries in range(cfg_rl.n_gen):
         print(tries)

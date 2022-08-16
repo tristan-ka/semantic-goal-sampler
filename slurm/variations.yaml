@@ -1,0 +1,2 @@
+n_gen: [5, 100]
+prompt_type : ['open', 'predicate']

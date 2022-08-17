@@ -7,6 +7,7 @@ from enum import Enum
 from omegaconf import DictConfig
 from lamorel import Caller
 from accelerate import Accelerator
+from hydra.utils import to_absolute_path
 
 accelerator = Accelerator()
 
@@ -14,7 +15,6 @@ sys.path.append('../.')
 sys.path.append('src/')
 from playground_env.env_params import get_env_params
 from playground_env.descriptions import generate_all_descriptions
-
 
 
 def generate_prompt(known_goals, prompt_type='open', n_goals=50):
@@ -45,7 +45,7 @@ def write_set_to_txt(filename, out_set):
             fp.write("%s\n" % item)
 
 
-@hydra.main(config_path="../conf", config_name="local_config")
+@hydra.main(config_path="../conf", config_name="local_config", )
 def main(cfg: DictConfig) -> None:
     lm_server = Caller(cfg.lamorel_args)
 
@@ -57,23 +57,40 @@ def main(cfg: DictConfig) -> None:
     logging.info(prompt_type)
     train_descriptions, test_descriptions, extra_descriptions = generate_all_descriptions(env_params)
 
-    print(cfg_rl.prompt_type)
-    print(cfg_rl.n_gen)
-    goal_candidates_out = []
+    if cfg_rl.generation_type == 'prob':
+        generation_kwargs = {
+            'max_new_tokens': 15,
+            'do_sample': True,
+            'temperature': 1,
+            'top_p': 0.7,
+            'top_k': 0,
+            'max_length': 128
+        }
+    elif cfg_rl.generation_type == 'deter':
+        generation_kwargs = {
+            'max_length': 128
+        }
+    else:
+        raise ValueError(
+            "{} unkown. Please enter a valid generation type (prob) or (deter)".format(cfg_rl.generation_type))
+
+    output_goals = []
     for tries in range(cfg_rl.n_gen):
         print(tries)
         prompts = [generate_prompt(known_goals=train_descriptions,
-                                 prompt_type=prompt_type,
-                                 n_goals=n_goals_prompt) for _ in range(cfg_rl.batch_size_gen)]
-        outputs = lm_server.generate(contexts=prompts)
+                                   prompt_type=prompt_type,
+                                   n_goals=n_goals_prompt) for _ in range(cfg_rl.batch_size_gen)]
+        outputs = lm_server.generate(contexts=prompts, **generation_kwargs)
 
         outputs_text = [output[0]['text'] for output in outputs]
-        goal_candidates = prune_output(outputs_text)
-        goal_candidates_out.extend(goal_candidates)
+        output_goals.extend(outputs_text)
 
-    set_candidates = set(goal_candidates_out)
-    write_set_to_txt(r'others.txt', set_candidates)
+    set_goals = set(output_goals)
+    set_pruned_goals = set(prune_output(output_goals))
+    write_set_to_txt(r'goals.txt', set_goals)
+    write_set_to_txt(r'pruned_goals.txt', set_pruned_goals)
     lm_server.close()
+
 
 if __name__ == '__main__':
     main()

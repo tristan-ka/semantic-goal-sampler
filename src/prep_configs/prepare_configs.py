@@ -27,19 +27,19 @@ def main(args):
     keys, values = zip(*variations.items())
     permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
 
-    with open(args.output_file, 'w') as fp:
+    with open(args.output_dir + '/variation_list.txt', 'w') as fp:
         for arg_dict in permutations_dicts:
             fp.write(dict_to_str(arg_dict))
 
     txt_out = 'outputs/' + '_'.join([kk + ':' + '${rl_script_args.' + kk + '}' for kk in keys])
-    with open('../../conf/variations/key_output_dir.txt', 'w') as fp:
+    with open(args.output_dir + 'key_outputdir.txt', 'w') as fp:
         fp.write(txt_out)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_file', type=str)
-    parser.add_argument('--output_file', type=str)
+    parser.add_argument('--output_dir', type=str)
     args = parser.parse_args()
     main(args)
 

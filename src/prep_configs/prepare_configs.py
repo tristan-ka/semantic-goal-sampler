@@ -32,7 +32,7 @@ def main(args):
             fp.write(dict_to_str(arg_dict))
 
     txt_out = 'outputs/' + '_'.join([kk + ':' + '${rl_script_args.' + kk + '}' for kk in keys])
-    with open('key_output_dir.txt', 'w') as fp:
+    with open('../../conf/variations/key_output_dir.txt', 'w') as fp:
         fp.write(txt_out)
 
 

@@ -1,3 +1,7 @@
+hydra:
+  run:
+    dir: outputs/n_gen:${rl_script_args.n_gen}_prompt_type:${rl_script_args.prompt_type}
+
 lamorel_args:
   distributed_setup_args:
     n_rl_processes: 1
@@ -19,11 +23,8 @@ lamorel_args:
 rl_script_args:
   path: ???
   task_idx: 13
-  n_gen: 3
-  n_goals: 10
-  prompt_type: 'open'
-  do_sample: True
-  temperature: 1
-  top_p: 0.5
-  num_return_sequences: 5
-  batch_size_gen: 2
+  n_gen: 1000
+  n_goals: 20
+  prompt_type: 'open' # 'predicate'
+  generation_type: 'deter' #'deter'
+  batch_size_gen: 10

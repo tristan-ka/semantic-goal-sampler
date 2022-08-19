@@ -1,7 +1,7 @@
 import yaml
 import itertools
 import argparse
-
+from ..utils import variations2permutations
 
 def dict_to_str(dict):
     out_str = ''
@@ -24,8 +24,7 @@ def main(args):
     with open(args.input_file, 'r') as json_file:
         variations = yaml.safe_load(json_file)
 
-    keys, values = zip(*variations.items())
-    permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
+    permutations_dicts = variations2permutations(variations)
 
     with open(args.output_dir + '/variation_list.txt', 'w') as fp:
         for arg_dict in permutations_dicts:

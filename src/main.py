@@ -3,11 +3,9 @@ import logging
 import sys
 import random
 import re
-from enum import Enum
 from omegaconf import DictConfig
 from lamorel import Caller
 from accelerate import Accelerator
-from hydra.utils import to_absolute_path
 
 accelerator = Accelerator()
 

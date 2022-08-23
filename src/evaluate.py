@@ -50,7 +50,7 @@ if __name__ == '__main__':
         result_dict['G_out'] = [goal_candidates - train_goals - test_goals]
         result_dict['test_coverage'] = len(goal_candidates.intersection(test_goals)) / len(test_goals)
         result_dict['precision'] = len(goal_candidates.intersection(test_goals)) / (
-                len(goal_candidates.intersection(test_goals)) + len(goal_candidates - train_goals - test_goals))
+                len(goal_candidates - train_goals))
         result_dict['other_size'] = len(goal_candidates - train_goals - test_goals)
         result_dict['key_dir'] = '\n'.join([k + ':' + str(v) for k, v in v_dict.items()])
 
@@ -69,7 +69,13 @@ if __name__ == '__main__':
     plt.style.use('ggplot')
 
 
-    plt.figure()
+    def on_resize(event):
+        fig = plt.gcf()
+        fig.tight_layout()
+        fig.canvas.draw()
+
+
+    fig1 = plt.figure()
     ax = sns.barplot(x='key_dir', y='test_coverage', data=df_result, capsize=.025)
     plt.title('Coverage')
     plt.ylabel('Coverage')
@@ -77,19 +83,19 @@ if __name__ == '__main__':
     plt.xticks(rotation=30, fontsize=8)
     plt.axhline(y=0.87, xmin=0, xmax=3.5, c='#534B62')
     xlims = ax.get_xlim()
-    text_pos = 0.75*xlims[1]
-    plt.text(x=text_pos, y=0.9, s='Imagine Construction Grammar', c='#534B62' )
+    text_pos = 0.75 * xlims[1]
+    plt.text(x=text_pos, y=0.9, s='Imagine Construction Grammar', c='#534B62')
     plt.tight_layout()
+    cid1 = fig1.canvas.mpl_connect('resize_event', on_resize)
 
-
-    plt.figure()
+    fig2 = plt.figure()
     ax = sns.barplot(x='key_dir', y='precision', data=df_result, capsize=.025)
     plt.title('Precision')
     plt.ylabel('Precision')
     plt.ylim([-0.01, 1.11])
     plt.xticks(rotation=30, fontsize=8)
     plt.axhline(y=0.41, xmin=0, xmax=3.5, c='#534B62')
-    plt.text(x=text_pos, y=0.44, s='Imagine Construction Grammar', c='#534B62' )
+    plt.text(x=text_pos, y=0.44, s='Imagine Construction Grammar', c='#534B62')
     plt.tight_layout()
 
     # plt.figure()
@@ -100,6 +106,7 @@ if __name__ == '__main__':
     # plt.xticks(rotation=30, fontsize=8)
     # plt.tight_layout()
 
+    cid2 = fig2.canvas.mpl_connect('resize_event', on_resize)
     plt.show()
 
     stop = 0
